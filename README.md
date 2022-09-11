@@ -19,13 +19,22 @@ The reconciliation service should now be accessible at [http://localhost:8000](h
 ## Development
 
 Setup pre-commit hooks:
-```
+```console
 pre-commit install
 ```
 
 Start the reconciliation service:
-```
+```console
 uvicorn main:app --reload --port 8000
+```
+
+## Build with Docker
+
+The service can also be built and run using Docker:
+
+```console
+docker build -t worldcat-reconciliation-service .
+docker run -p 8000:80 worldcat-reconciliation-service
 ```
 
 ## License
