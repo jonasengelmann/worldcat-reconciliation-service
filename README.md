@@ -1,7 +1,15 @@
 # Worldcat-reconciliation-service
-[![License](https://img.shields.io/github/license/FAIRDataTeam/OpenRefine-metadata-extension)](LICENSE)
+[![CI](https://github.com/jonasengelmann/worldcat-reconciliation-service/actions/workflows/docker-publish.yml/badge.svg?branch=main)](https://github.com/jonasengelmann/worldcat-reconciliation-service/actions)
+[![License](https://img.shields.io/github/license/jonasengelmann/worldcat-reconciliation-service)](LICENSE)
 
 [OpenRefine](http://openrefine.org) reconciliation service for [Worldcat](https://www.worldcat.org).
+
+
+## Run via Docker (Recommended)
+
+```console
+docker run -p 8000:80 jonasengelmann/worldcat-reconciliation-service:main
+```
 
 ## Installation and Deployment
 
