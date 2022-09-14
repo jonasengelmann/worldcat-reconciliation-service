@@ -8,7 +8,7 @@ fastapi==0.82.0
 filelock==3.8.0
 h11==0.13.0
 identify==2.5.5
-idna==3.3
+idna==3.4
 nodeenv==1.7.0
 platformdirs==2.5.2
 pre-commit==2.20.0
