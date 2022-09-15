@@ -1,5 +1,5 @@
 anyio==3.6.1
-certifi==2022.6.15.1
+certifi==2022.9.14
 cfgv==3.3.1
 charset-normalizer==2.1.1
 click==8.1.3
