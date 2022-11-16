@@ -83,7 +83,8 @@ class WorldcatAPI:
         type_: Optional[str] = None,
         publication_year: Optional[int] = None,
     ) -> list[dict]:
-        url = f"{self.base_url}/search?q=ti:{urllib.parse.quote_plus(title)}"
+        preprocessed_title = WorldcatAPI.preprocess_string(title)
+        url = f"{self.base_url}/search?q=ti:{urllib.parse.quote_plus(preprocessed_title)}"
 
         if author:
             url += f"+AND+au:{urllib.parse.quote_plus(author)}"
@@ -137,7 +138,7 @@ class WorldcatAPI:
     @staticmethod
     def preprocess_string(x: str) -> str:
         """Removes punctuation, double whitespace and converts to lowercase."""
-        x = x.translate(str.maketrans("", "", string.punctuation)).lower()
+        x = x.translate(str.maketrans(string.punctuation, ' '*len(string.punctuation))).lower()
         return re.sub(" +", " ", x).strip()
 
     def get_worldcat_cookie(self) -> http.cookiejar.Cookie:
