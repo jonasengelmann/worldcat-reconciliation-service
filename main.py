@@ -114,7 +114,9 @@ def process_extend(extend):
             for id in extend_batch.get("ids"):
                 all_editions = worldcat_api.get_all_editions(oclc=id)
                 result["rows"][id] = {
-                    "oclc": [{"str": str(x["oclcNumber"])} for x in all_editions]
+                    "oclc_of_all_editions": [
+                        {"str": str(x["oclcNumber"])} for x in all_editions
+                    ]
                 }
     return result
 
