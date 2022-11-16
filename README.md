@@ -9,7 +9,27 @@ If there is only need to disambiguate conceptual works, i.e. specific realizatio
 
 Edit column -> Add columns from reconciled values... -> OCLC Numbers of all Editions
 
-## Installation and Deployment
+
+## Run via Docker-Compose (Recommended)
+
+```console
+cp .env.docker-compose .env
+docker-compose up --build
+```
+
+The reconciliation service should now be accessible at [http://localhost](http://localhost). 
+
+## Development
+
+The reconciliation service requires Selenium, it's easiest to run a standalone instance using docker:
+```console
+docker run --rm -it -p 4444:4444 --shm-size 2g seleniarm/standalone-chromium:latest
+```
+
+Setup pre-commit hooks:
+```console
+pre-commit install
+```
 
 ```console
 pip3 install -r requirement.txt
@@ -17,22 +37,10 @@ pip3 install -r requirement.txt
 
 Start the reconciliation service:
 ```console
-python3 main.py
+uvicorn main:app --reload --port 8000 --env-file .env.dev
 ```
 
 The reconciliation service should now be accessible at [http://localhost:8000](http://localhost:8000). 
-
-## Development
-
-Setup pre-commit hooks:
-```console
-pre-commit install
-```
-
-Start the reconciliation service:
-```console
-uvicorn main:app --reload --port 8000
-```
 
 ## License
 
