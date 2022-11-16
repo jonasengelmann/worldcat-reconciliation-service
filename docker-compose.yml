@@ -8,7 +8,7 @@ services:
       - SE_START_XVFB=false
       - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4444"]
+      test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
       interval: 10s
       timeout: 5s
       retries: 5
