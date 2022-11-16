@@ -8,12 +8,10 @@ import Levenshtein
 import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from webdriver_manager.chrome import ChromeDriverManager
 
 
 class MissingCookieException(Exception):
@@ -21,7 +19,8 @@ class MissingCookieException(Exception):
 
 
 class WorldcatAPI:
-    def __init__(self) -> None:
+    def __init__(self, remote_webdriver_address:str) -> None:
+        self.remote_webdriver_address = remote_webdriver_address
         self.session = self.create_session()
         self.base_url = "https://www.worldcat.org/api"
         self.types = {
@@ -142,9 +141,8 @@ class WorldcatAPI:
 
     def get_worldcat_cookie(self) -> http.cookiejar.Cookie:
         options = Options()
-        options.headless = True
-        driver = webdriver.Chrome(
-            service=ChromeService(ChromeDriverManager().install()), options=options
+        driver = webdriver.Remote(
+            command_executor=self.remote_webdriver_address, options=options
         )
         driver.get("https://www.worldcat.org/")
         try:

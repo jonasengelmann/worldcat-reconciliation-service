@@ -1,5 +1,7 @@
+import os
 import json
 from typing import Optional
+from dotenv import load_dotenv
 
 import uvicorn
 from fastapi import FastAPI, Request
@@ -8,12 +10,14 @@ from starlette.middleware.cors import CORSMiddleware
 
 from worldcat_api import WorldcatAPI
 
-worldcat_api = WorldcatAPI()
+load_dotenv()
+
+worldcat_api = WorldcatAPI(remote_webdriver_address=os.environ["REMOTE_WEBDRIVER_ADDRESS"])
 
 app = FastAPI(title="Worldcat Reconciliation Service API")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:3333"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -29,13 +33,13 @@ metadata = {
     "schemaSpace": "http://localhost/schema",
     "view": {"url": "https://www.worldcat.org/oclc/{{id}}"},
     "preview": {
-        "url": "http://127.0.0.1:8000/preview?id={{id}}",
+        "url": os.environ["RECONCILIATION_SERVICE_DOMAIN"].strip('/') + "/preview?id={{id}}",
         "height": 250,
         "width": 350,
     },
     "extend": {
         "propose_properties": {
-            "service_url": "http://localhost:8000",
+            "service_url": os.environ["RECONCILIATION_SERVICE_DOMAIN"],
             "service_path": "/properties",
         },
         "property_settings": [
