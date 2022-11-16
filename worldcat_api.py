@@ -79,8 +79,10 @@ class WorldcatAPI:
         retries = 5
         while retries:
             try:
-                return self.session.get(url)
-            except requests.ConnectionException as e:
+                response = self.session.get(url)
+                response.raise_for_status()
+                return response
+            except requests.exceptions.HTTPError as e:
                 last_connection_exception = e
                 self.session = self.create_session()
                 retries -= 1
