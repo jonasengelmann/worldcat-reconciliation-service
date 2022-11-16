@@ -10,13 +10,6 @@ If there is only need to disambiguate conceptual works, i.e. specific realizatio
 
 Edit column -> Add columns from reconciled values... -> OCLC Numbers of all Editions
 
-
-## Run via Docker (Recommended)
-
-```console
-docker run -p 8000:80 jonasengelmann/worldcat-reconciliation-service:main
-```
-
 ## Installation and Deployment
 
 ```console
@@ -40,15 +33,6 @@ pre-commit install
 Start the reconciliation service:
 ```console
 uvicorn main:app --reload --port 8000
-```
-
-## Build with Docker
-
-The service can also be built and run using Docker:
-
-```console
-docker build -t worldcat-reconciliation-service .
-docker run -p 8000:80 worldcat-reconciliation-service
 ```
 
 ## License
