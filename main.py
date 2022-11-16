@@ -83,25 +83,25 @@ def process_queries(queries):
             publication_year=publication_year,
         )
 
-        results[key] = {
-            "result": [
-                {
-                    "id": x["record"]["oclcNumber"],
-                    "name": x["record"]["title"],
-                    "type": [
-                        {
-                            "id": x["record"]["generalFormat"].lower(),
-                            "name": worldcat_api.types.get(
-                                x["record"]["generalFormat"].lower()
-                            ),
-                        }
-                    ],
-                    "score": x["score"],
-                    "match": True,
-                }
-                for x in worldcat_results
-            ]
-        }
+        result = []
+        for x in worldcat_results:
+            record = {
+                "id": x["record"]["oclcNumber"],
+                "name": x["record"]["title"],
+                "score": x["score"],
+                "match": True,
+            }
+            if general_format := x["record"].get("generalFormat"):
+                record['type'] = [
+                    {
+                        "id": general_format.lower(),
+                        "name": worldcat_api.types.get(general_format.lower()),
+                    }
+                ]
+            result.append(record)
+
+        results[key] = {"result": result}
+
     return results
 
 
