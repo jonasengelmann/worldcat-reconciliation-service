@@ -1,5 +1,4 @@
 # Worldcat-reconciliation-service
-[![CI](https://github.com/jonasengelmann/worldcat-reconciliation-service/actions/workflows/docker-publish.yml/badge.svg?branch=main)](https://github.com/jonasengelmann/worldcat-reconciliation-service/actions)
 [![License](https://img.shields.io/github/license/jonasengelmann/worldcat-reconciliation-service)](LICENSE)
 
 [OpenRefine](http://openrefine.org) reconciliation service for [Worldcat](https://www.worldcat.org).
