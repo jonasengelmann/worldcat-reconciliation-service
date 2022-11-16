@@ -8,12 +8,10 @@ import Levenshtein
 import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from webdriver_manager.chrome import ChromeDriverManager
 
 
 class MissingCookieException(Exception):
@@ -21,7 +19,8 @@ class MissingCookieException(Exception):
 
 
 class WorldcatAPI:
-    def __init__(self) -> None:
+    def __init__(self, remote_webdriver_address:str) -> None:
+        self.remote_webdriver_address = remote_webdriver_address
         self.session = self.create_session()
         self.base_url = "https://www.worldcat.org/api"
         self.types = {
@@ -76,6 +75,19 @@ class WorldcatAPI:
         session.cookies.set_cookie(self.get_worldcat_cookie())
         return session
 
+    def get(self, url):
+        retries = 5
+        while retries:
+            try:
+                response = self.session.get(url)
+                response.raise_for_status()
+                return response
+            except requests.exceptions.HTTPError as e:
+                last_connection_exception = e
+                self.session = self.create_session()
+                retries -= 1
+        raise last_connection_exception
+
     def search(
         self,
         title: str,
@@ -95,7 +107,7 @@ class WorldcatAPI:
         if publication_year:
             url += f"&datePublished={publication_year}-{publication_year}"
 
-        records = self.session.get(url).json().get("briefRecords", [])
+        records = self.get(url).json().get("briefRecords", [])
 
         results = []
         for record in records:
@@ -106,7 +118,7 @@ class WorldcatAPI:
 
     def get_metadata(self, oclc: int) -> dict:
         url = f"{self.base_url}/search?q=no:{oclc}"
-        records = self.session.get(url).json().get("briefRecords", [])
+        records = self.get(url).json().get("briefRecords", [])
         if len(records) == 1:
             return records[0]
         else:
@@ -143,12 +155,18 @@ class WorldcatAPI:
 
     def get_worldcat_cookie(self) -> http.cookiejar.Cookie:
         options = Options()
-        options.headless = True
-        driver = webdriver.Chrome(
-            service=ChromeService(ChromeDriverManager().install()), options=options
+        options.add_argument("start-maximized")
+        options.add_argument("disable-infobars")
+        options.add_argument("--disable-extensions")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--headless")
+        driver = webdriver.Remote(
+            command_executor=self.remote_webdriver_address, options=options
         )
-        driver.get("https://www.worldcat.org/")
         try:
+            driver.get("https://www.worldcat.org/")
             search_input = WebDriverWait(driver, 15).until(
                 EC.presence_of_element_located(
                     (By.XPATH, "//input[@data-testid='home-page-search-bar']")
