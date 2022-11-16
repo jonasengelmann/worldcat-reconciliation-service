@@ -148,7 +148,7 @@ class WorldcatAPI:
         )
         driver.get("https://www.worldcat.org/")
         try:
-            """search_input = WebDriverWait(driver, 15).until(
+            search_input = WebDriverWait(driver, 15).until(
                 EC.presence_of_element_located(
                     (By.XPATH, "//input[@data-testid='home-page-search-bar']")
                 )
@@ -161,7 +161,7 @@ class WorldcatAPI:
                 EC.presence_of_element_located(
                     (By.XPATH, "//div[@data-testid='search-results-count-container']")
                 )
-            )"""
+            )
 
             cookies = driver.get_cookies()
         finally:
