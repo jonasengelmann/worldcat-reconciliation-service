@@ -75,6 +75,17 @@ class WorldcatAPI:
         session.cookies.set_cookie(self.get_worldcat_cookie())
         return session
 
+    def get(self, url):
+        retries = 5
+        while retries:
+            try:
+                return self.session.get(url)
+            except requests.ConnectionException as e:
+                last_connection_exception = e
+                self.session = self.create_session()
+                retries -= 1
+        raise last_connection_exception
+
     def search(
         self,
         title: str,
@@ -93,7 +104,7 @@ class WorldcatAPI:
         if publication_year:
             url += f"&datePublished={publication_year}-{publication_year}"
 
-        records = self.session.get(url).json().get("briefRecords", [])
+        records = self.get(url).json().get("briefRecords", [])
 
         results = []
         for record in records:
@@ -104,7 +115,7 @@ class WorldcatAPI:
 
     def get_metadata(self, oclc: int) -> dict:
         url = f"{self.base_url}/search?q=no:{oclc}"
-        records = self.session.get(url).json().get("briefRecords", [])
+        records = self.get(url).json().get("briefRecords", [])
         if len(records) == 1:
             return records[0]
         else:
@@ -151,8 +162,8 @@ class WorldcatAPI:
         driver = webdriver.Remote(
             command_executor=self.remote_webdriver_address, options=options
         )
-        driver.get("https://www.worldcat.org/")
         try:
+            driver.get("https://www.worldcat.org/")
             search_input = WebDriverWait(driver, 15).until(
                 EC.presence_of_element_located(
                     (By.XPATH, "//input[@data-testid='home-page-search-bar']")
