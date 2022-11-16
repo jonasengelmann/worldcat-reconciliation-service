@@ -5,6 +5,7 @@ services:
     restart: unless-stopped
     shm_size: 2gb
     environment:
+      - SE_START_XVFB=false
       - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4444"]
