@@ -111,9 +111,10 @@ class WorldcatAPI:
 
         results = []
         for record in records:
-            score = self.calculate_score(title, record)
-            if score > 0:
-                results.append({"score": score, "record": record})
+            if title:
+                score = self.calculate_score(title, record)
+                if score > 0:
+                    results.append({"score": score, "record": record})
         return results
 
     def get_metadata(self, oclc: int) -> dict:
