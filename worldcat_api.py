@@ -111,8 +111,8 @@ class WorldcatAPI:
 
         results = []
         for record in records:
-            if title:
-                score = self.calculate_score(title, record)
+            if record.get('title').strip():
+                score = self.calculate_score(preprocessed_title, record)
                 if score > 0:
                     results.append({"score": score, "record": record})
         return results
@@ -143,7 +143,6 @@ class WorldcatAPI:
 
     @staticmethod
     def calculate_score(title: str, record: dict) -> int:
-        title = WorldcatAPI.preprocess_string(title)
         found_title = WorldcatAPI.preprocess_string(record["title"])
         distance = Levenshtein.distance(title, found_title)
         return int(max((1 - (distance / len(title))) * 100, 0))
