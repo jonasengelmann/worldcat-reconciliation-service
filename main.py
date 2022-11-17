@@ -178,7 +178,7 @@ def preview(id: int):
             elif key == "contributors":
                 x = "; ".join(
                     [
-                        f"{y.get('firstName', {}).get('text', '')}"
+                        f"{y.get('firstName', {}).get('text', '')} "
                         + f"{y.get('secondName', {}).get('text', '')}"
                         for y in metadata.get("contributors", [])
                     ]
