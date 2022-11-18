@@ -1,10 +1,12 @@
 import http
+import json
 import re
 import string
 import urllib.parse
 from typing import Optional
 
 import Levenshtein
+import redis
 import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -19,10 +21,16 @@ class MissingCookieException(Exception):
 
 
 class WorldcatAPI:
-    def __init__(self, remote_webdriver_address:str) -> None:
+    def __init__(self, remote_webdriver_address:str, redis_endpoint:str = None) -> None:
         self.remote_webdriver_address = remote_webdriver_address
         self.session = self.create_session()
         self.base_url = "https://www.worldcat.org/api"
+        if redis_endpoint:
+            self.redis_client = redis.Redis(host=redis_endpoint.replace("http://", ""), db=0)
+            self.redis_client.config_set("maxmemory", "3GB")
+            self.redis_client.config_set('maxmemory-policy', "allkeys-lru")
+        else:
+            self.redis_client = None
         self.types = {
             "book": "Book",
             "audiobook": "Audiobook",
@@ -115,9 +123,16 @@ class WorldcatAPI:
                 score = self.calculate_score(preprocessed_title, record)
                 if score > 0:
                     results.append({"score": score, "record": record})
+                    if self.redis_client:
+                        self.redis_client.set(record["oclcNumber"], json.dumps(record))
         return results
 
     def get_metadata(self, oclc: int) -> dict:
+        if self.redis_client:
+            result = self.redis_client.get(str(oclc))
+            if result:
+                return json.loads(result)
+
         url = f"{self.base_url}/search?q=no:{oclc}"
         records = self.get(url).json().get("briefRecords", [])
         if len(records) == 1:
