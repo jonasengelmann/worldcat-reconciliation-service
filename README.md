@@ -21,9 +21,10 @@ The reconciliation service should now be accessible at [http://localhost](http:/
 
 ## Development
 
-The reconciliation service requires Selenium, it's easiest to run a standalone instance using docker:
+The reconciliation service requires Selenium and Redis. The easiest way is to run these services via Docker:
 ```console
 docker run --rm -it -p 4444:4444 --shm-size 2g seleniarm/standalone-chromium:latest
+docker run --rm -it -p 6379:6379 redis:latest
 ```
 
 Setup pre-commit hooks:

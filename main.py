@@ -12,7 +12,9 @@ from worldcat_api import WorldcatAPI
 
 load_dotenv()
 
-worldcat_api = WorldcatAPI(remote_webdriver_address=os.environ["REMOTE_WEBDRIVER_ADDRESS"])
+worldcat_api = WorldcatAPI(
+    remote_webdriver_address=os.environ["REMOTE_WEBDRIVER_ADDRESS"],
+    redis_endpoint=os.environ.get('REDIS_ENDPOINT'))
 
 app = FastAPI(title="Worldcat Reconciliation Service API")
 app.add_middleware(

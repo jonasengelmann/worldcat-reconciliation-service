@@ -13,6 +13,12 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:latest
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
   worldcat-reconciliation-service:
     build:
       context: .
@@ -22,6 +28,7 @@ services:
         condition: service_healthy
     environment:
       - REMOTE_WEBDRIVER_ADDRESS=http://selenium:4444
+      - REDIS_ENDPOINT=redis
       - RECONCILIATION_SERVICE_DOMAIN=${RECONCILIATION_SERVICE_DOMAIN?RECONCILIATION_SERVICE_DOMAIN not set}
     ports:
       - "80:80"
