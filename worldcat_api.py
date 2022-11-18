@@ -111,7 +111,7 @@ class WorldcatAPI:
 
         results = []
         for record in records:
-            if record.get('title', '').strip():
+            if record.get('title'):
                 score = self.calculate_score(preprocessed_title, record)
                 if score > 0:
                     results.append({"score": score, "record": record})
